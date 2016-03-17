@@ -9,6 +9,7 @@ var g = 0.1
 // stores the fly info
 var fly
 var landing
+var ui = true
 
 function launch(velocity) {
   // check if velocity is a fine object
@@ -60,9 +61,22 @@ function draw() {
   // draw the landing
   if (landing) {
     cursor.goto(landing, process.stdout.rows - 1).yellow().write('#')
+    // draw the landing
+    if (ui && !fly) {
+      var landpos = landing
+      landpos = landpos >= 0 ? landpos < process.stdout.columns ? ~~landpos : process.stdout.columns - 1 : 0
+      cursor.goto(0, 0).black().write('landing : ').grey().write('(' + landpos + '; 0)')
+    }
   }
-  // draw the ball
+  // draw the basket
+  cursor.goto()
+
   if (fly) {
+    // draw the force
+    if (ui) {
+      cursor.goto(0, 0).black().write('force : ').grey().write('(' + fly.velocity.x.toFixed(2) + '; ' + fly.velocity.y.toFixed(2) + ')')
+    }
+    // draw the ball
     var y = process.stdout.rows - 1 - ~~fly.pos.y
     cursor.goto(~~fly.pos.x, y >= 0 ? y : 0).red().write(y < 0 ? '+' : 'O')
   }
@@ -80,7 +94,11 @@ function key(character, key) {
   }
 
   if (key && key.name === 'e') {
-    launch({x: 1.75, y: 2})
+    launch({x: Math.random() * 5, y: 1 + Math.random() * 5})
+  }
+
+  if (key && key.name === 'u') {
+    ui = !ui
   }
 }
 

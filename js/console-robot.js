@@ -4,14 +4,10 @@ var clear = require('clear')
 var keypress = require('keypress')
 var brain = require('brain')
 
-var g = 9.81
+var g = 0.1
 
 // stores the fly info
-var fly = {
-  velocity: { x:0, y:0 },
-  pos: { x:0, y:20 },
-  t: 0
-}
+var fly
 
 function launch(velocity) {
   // check if velocity is a fine object
@@ -19,14 +15,17 @@ function launch(velocity) {
     return
   }
   // save fly data
-  fly.pos = { x:0, y:20 }
-  fly.t = 0
-  fly.velocity = velocity
+  fly = {
+    pos: { x:0, y:20 },
+    t: 0,
+    velocity: velocity
+  }
+
 }
 
 function iterate() {
   // if velocity is real and positive
-  if (!(fly.velocity.x > 0 && fly.velocity.y > 0)) {
+  if (!(fly && fly.velocity.x > 0 && fly.velocity.y > 0)) {
     return
   }
 
@@ -34,7 +33,11 @@ function iterate() {
   fly.t++
   // compute next position
   fly.pos.x = fly.velocity.x * fly.t
-  fly.pos.y = 5
+  fly.pos.y = g*Math.pow(fly.t, 2) - fly.velocity.y * fly.t + 20
+  // if the height is 20, we stop
+  if (fly.pos.y == 20) {
+    fly = undefined
+  }
 }
 
 
@@ -50,7 +53,10 @@ function draw() {
   // draw the character
   cursor.goto(0, 20).black().write('X')
   // draw the ball
-  cursor.goto(~~fly.pos.x, ~~fly.pos.y).red().write('O')
+  if (fly) {
+    var y = ~~fly.pos.y
+    cursor.goto(~~fly.pos.x, y >= 0 ? y : 0).red().write('O')
+  }
 }
 
 function main() {
@@ -71,11 +77,15 @@ function main() {
 
 function key(character, key) {
   // handle ctrl+c
-  if (key && key.ctrl && key.name == 'c') {
+  if (key && key.ctrl && key.name === 'c') {
     process.stdin.pause()
     console.log('\033[2J')
     cursor.reset()
     process.exit()
+  }
+
+  if (key && key.name === 'e') {
+    launch({x: 1, y: 1})
   }
 }
 

@@ -11,12 +11,12 @@ var fly
 
 function launch(velocity) {
   // check if velocity is a fine object
-  if (!velocity || !velocity.x || !velocity.y) {
+  if (!velocity || !velocity.x || !velocity.y || fly) {
     return
   }
   // save fly data
   fly = {
-    pos: { x:0, y:20 },
+    pos: { x:0, y:0 },
     t: 0,
     velocity: velocity
   }
@@ -25,7 +25,12 @@ function launch(velocity) {
 
 function iterate() {
   // if velocity is real and positive
-  if (!(fly && fly.velocity.x > 0 && fly.velocity.y > 0)) {
+  if (!(fly && fly.velocity.x >= 0 && fly.velocity.y >= 0)) {
+    return
+  }
+  // if the height is floor, we stop
+  if (fly.pos.y <= 0 && fly.t > 0) {
+    fly = undefined
     return
   }
 
@@ -33,11 +38,7 @@ function iterate() {
   fly.t++
   // compute next position
   fly.pos.x = fly.velocity.x * fly.t
-  fly.pos.y = g*Math.pow(fly.t, 2) - fly.velocity.y * fly.t + 20
-  // if the height is 20, we stop
-  if (fly.pos.y == 20) {
-    fly = undefined
-  }
+  fly.pos.y = -g*Math.pow(fly.t, 2) + fly.velocity.y * fly.t
 }
 
 
@@ -51,28 +52,16 @@ function draw() {
   iterate()
 
   // draw the character
-  cursor.goto(0, 20).black().write('X')
+  cursor.goto(0, process.stdout.rows - 2).black().write('X')
+  // draw the wall
+  cursor.goto(0, process.stdout.rows - 1).grey().write(Array(process.stdout.columns).join("-"))
   // draw the ball
   if (fly) {
     var y = ~~fly.pos.y
-    cursor.goto(~~fly.pos.x, y >= 0 ? y : 0).red().write('O')
+    cursor.goto(~~fly.pos.x, process.stdout.rows - 1 - y).red().write('O')
   }
 }
 
-function main() {
-  // set the frame duration
-  var framerate = 100
-  i = 0
-
-  // hook up on the keyboard
-  keypress(process.stdin)
-  process.stdin.on('keypress', key)
-  process.stdin.setRawMode(true)
-  process.stdin.resume()
-
-  // program the graphic update
-  var drawId = setInterval(draw, framerate)
-}
 
 
 function key(character, key) {
@@ -85,8 +74,21 @@ function key(character, key) {
   }
 
   if (key && key.name === 'e') {
-    launch({x: 1, y: 1})
+    launch({x: 1.75, y: 2})
   }
+}
+
+function main() {
+  // set the frame duration
+  var framerate = 100
+  i = 0
+  // hook up on the keyboard
+  keypress(process.stdin)
+  process.stdin.on('keypress', key)
+  process.stdin.setRawMode(true)
+  process.stdin.resume()
+  // program the graphic update
+  var drawId = setInterval(draw, framerate)
 }
 
 // start the program

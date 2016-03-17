@@ -8,6 +8,7 @@ var g = 0.1
 
 // stores the fly info
 var fly
+var landing
 
 function launch(velocity) {
   // check if velocity is a fine object
@@ -30,6 +31,7 @@ function iterate() {
   }
   // if the height is floor, we stop
   if (fly.pos.y <= 0 && fly.t > 0) {
+    landing = fly.pos.x
     fly = undefined
     return
   }
@@ -55,10 +57,13 @@ function draw() {
   cursor.goto(0, process.stdout.rows - 2).black().write('X')
   // draw the wall
   cursor.goto(0, process.stdout.rows - 1).grey().write(Array(process.stdout.columns).join("-"))
+  // draw the landing
+  if (landing) {
+    cursor.goto(landing, process.stdout.rows - 1).yellow().write('#')
+  }
   // draw the ball
   if (fly) {
-    var y = ~~fly.pos.y
-    cursor.goto(~~fly.pos.x, process.stdout.rows - 1 - y).red().write('O')
+    cursor.goto(~~fly.pos.x, process.stdout.rows - 1 - ~~fly.pos.y).red().write('O')
   }
 }
 

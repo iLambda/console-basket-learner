@@ -2,8 +2,9 @@
   "name": "console-basket-learner",
   "version": "0.1.0",
   "description": "A little console algorithm that teaches itself to play basketball.",
-  "main": "js/entry.js",
+  "main": "js/console-robot.js",
   "scripts": {
+    "start": "node js/console-robot.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -14,5 +15,12 @@
     "terminator"
   ],
   "author": "iLambda",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "ansi": "^0.3.1",
+    "brain": "^0.7.0",
+    "clear": "0.0.1",
+    "cursor": "^0.1.5",
+    "keypress": "^0.2.1"
+  }
 }

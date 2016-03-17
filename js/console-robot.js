@@ -63,7 +63,8 @@ function draw() {
   }
   // draw the ball
   if (fly) {
-    cursor.goto(~~fly.pos.x, process.stdout.rows - 1 - ~~fly.pos.y).red().write('O')
+    var y = process.stdout.rows - 1 - ~~fly.pos.y
+    cursor.goto(~~fly.pos.x, y >= 0 ? y : 0).red().write(y < 0 ? '+' : 'O')
   }
 }
 

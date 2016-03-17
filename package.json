@@ -1,0 +1,18 @@
+{
+  "name": "console-basket-learner",
+  "version": "0.1.0",
+  "description": "A little console algorithm that teaches itself to play basketball.",
+  "main": "js/entry.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "basket",
+    "console",
+    "algorithm",
+    "ansi",
+    "terminator"
+  ],
+  "author": "iLambda",
+  "license": "MIT"
+}
